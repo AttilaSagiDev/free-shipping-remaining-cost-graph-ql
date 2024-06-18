@@ -10,6 +10,7 @@ namespace Space\FreeShippingRemainingCostGraphQl\Model\Resolver;
 
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Space\FreeShippingRemainingCostGraphQl\Model\GuestCalculation;
+use Space\FreeShippingRemainingCost\Api\Data\ConfigInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -25,14 +26,22 @@ class GuestCartRemainingCost implements ResolverInterface
     private GuestCalculation $guestCalculation;
 
     /**
+     * @var ConfigInterface
+     */
+    private ConfigInterface $config;
+
+    /**
      * Constructor
      *
      * @param GuestCalculation $guestCalculation
+     * @param ConfigInterface $config
      */
     public function __construct(
-        GuestCalculation $guestCalculation
+        GuestCalculation $guestCalculation,
+        ConfigInterface $config
     ) {
         $this->guestCalculation = $guestCalculation;
+        $this->config = $config;
     }
 
     /**
@@ -55,6 +64,10 @@ class GuestCartRemainingCost implements ResolverInterface
         array $value = null,
         array $args = null
     ): array {
+        if (!$this->config->isEnabled()) {
+            throw new GraphQlInputException(__('Space FreeShippingRemainingCost module is not enabled.'));
+        }
+
         if (empty($args['cart_id'])) {
             throw new GraphQlInputException(__('Required parameter "cart_id" is missing'));
         }
