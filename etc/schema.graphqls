@@ -1,0 +1,11 @@
+# Copyright (c) 2024 Attila Sagi
+# @license http://www.opensource.org/licenses/mit-license.html  MIT License
+
+type Query {
+    guestCartRemaininCost(cart_id: String! @doc(description: "The unique ID of the cart to query.")): RemaininCost @resolver (class: "\\Space\\FreeShippingRemainingCostGraphQl\\Model\\Resolver\\GuestCartRemainingCost") @doc(description:"Return information about the remaining cost of the specified shopping cart.") @cache(cacheable: false)
+}
+
+type RemaininCost @doc(description: "Defines details about the remaining cost of the cart.") {
+    message: String! @doc(description: "Required. The message of the remaining cost.")
+    value: String! @doc(description: "Required. The value of the remaining cost.")
+}
