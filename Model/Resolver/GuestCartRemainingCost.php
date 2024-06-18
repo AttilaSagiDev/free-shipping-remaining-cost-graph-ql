@@ -11,8 +11,11 @@ namespace Space\FreeShippingRemainingCostGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Space\FreeShippingRemainingCostGraphQl\Model\GuestCalculation;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 
 class GuestCartRemainingCost implements ResolverInterface
 {
@@ -33,15 +36,17 @@ class GuestCartRemainingCost implements ResolverInterface
     }
 
     /**
-     * Resolve
+     * Resolver
      *
      * @param Field $field
-     * @param $context
+     * @param ContextInterface $context
      * @param ResolveInfo $info
      * @param array|null $value
      * @param array|null $args
      * @return array
      * @throws GraphQlInputException
+     * @throws GraphQlAuthorizationException
+     * @throws GraphQlNoSuchEntityException
      */
     public function resolve(
         Field $field,

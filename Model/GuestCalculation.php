@@ -36,7 +36,10 @@ class GuestCalculation
      */
     private IsActive $isActive;
 
-    private RemainingCostInterfaceFactory $remainingCostFactory;
+    /**
+     * @var RemainingCostInterfaceFactory
+     */
+    private RemainingCostInterfaceFactory $remainingCostCalculationFactory;
 
     /**
      * @var InfoProvider
@@ -49,20 +52,20 @@ class GuestCalculation
      * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      * @param CartRepositoryInterface $cartRepository
      * @param IsActive $isActive
-     * @param RemainingCostInterfaceFactory $remainingCostFactory
+     * @param RemainingCostInterfaceFactory $remainingCostCalculationFactory
      * @param InfoProvider $infoProvider
      */
     public function __construct(
         MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         CartRepositoryInterface $cartRepository,
         IsActive $isActive,
-        RemainingCostInterfaceFactory $remainingCostFactory,
+        RemainingCostInterfaceFactory $remainingCostCalculationFactory,
         InfoProvider $infoProvider
     ) {
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->cartRepository = $cartRepository;
         $this->isActive = $isActive;
-        $this->remainingCostFactory = $remainingCostFactory;
+        $this->remainingCostCalculationFactory = $remainingCostCalculationFactory;
         $this->infoProvider = $infoProvider;
     }
 
@@ -81,7 +84,7 @@ class GuestCalculation
             $cartId = $this->maskedQuoteIdToQuoteId->execute($cartHash);
             /** @var Quote $cart */
             $cart = $this->cartRepository->get($cartId);
-        } catch (NoSuchEntityException $exception) {
+        } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(
                 __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $cartHash])
             );
