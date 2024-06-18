@@ -10,6 +10,7 @@
     <module name="Space_FreeShippingRemainingCostGraphQl">
         <sequence>
             <module name="Magento_GraphQl"/>
+            <module name="Magento_QuoteGraphQl"/>
             <module name="Space_FreeShippingRemainingCost"/>
         </sequence>
     </module>
