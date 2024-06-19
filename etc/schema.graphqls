@@ -3,6 +3,7 @@
 
 type Query {
     guestCartRemaininCost(cart_id: String! @doc(description: "The unique ID of the cart to query.")): RemaininCost @resolver (class: "\\Space\\FreeShippingRemainingCostGraphQl\\Model\\Resolver\\GuestCartRemainingCost") @doc(description:"Return information about the remaining cost of the specified shopping cart.") @cache(cacheable: false)
+    customerCartRemaininCost: RemaininCost! @resolver (class: "\\Space\\FreeShippingRemainingCostGraphQl\\Model\\Resolver\\CustomerCartRemainingCost") @doc(description:"Return information about the customer's remaining cost of the shopping cart.") @cache(cacheable: false)
 }
 
 type RemaininCost @doc(description: "Defines details about the remaining cost of the cart.") {

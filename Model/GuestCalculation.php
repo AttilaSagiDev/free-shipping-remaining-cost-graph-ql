@@ -11,13 +11,10 @@ namespace Space\FreeShippingRemainingCostGraphQl\Model;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\QuoteGraphQl\Model\Cart\IsActive;
-use Space\FreeShippingRemainingCost\Api\Data\RemainingCostInterfaceFactory;
-use Space\FreeShippingRemainingCost\Model\Service\InfoProvider;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
-use Space\FreeShippingRemainingCost\Api\Data\RemainingCostInterface;
 
 class GuestCalculation
 {
@@ -37,14 +34,9 @@ class GuestCalculation
     private IsActive $isActive;
 
     /**
-     * @var RemainingCostInterfaceFactory
+     * @var CalculationProvider
      */
-    private RemainingCostInterfaceFactory $remainingCostCalculationFactory;
-
-    /**
-     * @var InfoProvider
-     */
-    private InfoProvider $infoProvider;
+    private CalculationProvider $calculationProvider;
 
     /**
      * Constructor
@@ -52,21 +44,18 @@ class GuestCalculation
      * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      * @param CartRepositoryInterface $cartRepository
      * @param IsActive $isActive
-     * @param RemainingCostInterfaceFactory $remainingCostCalculationFactory
-     * @param InfoProvider $infoProvider
+     * @param CalculationProvider $calculationProvider
      */
     public function __construct(
         MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         CartRepositoryInterface $cartRepository,
         IsActive $isActive,
-        RemainingCostInterfaceFactory $remainingCostCalculationFactory,
-        InfoProvider $infoProvider
+        CalculationProvider $calculationProvider
     ) {
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->cartRepository = $cartRepository;
         $this->isActive = $isActive;
-        $this->remainingCostCalculationFactory = $remainingCostCalculationFactory;
-        $this->infoProvider = $infoProvider;
+        $this->calculationProvider = $calculationProvider;
     }
 
     /**
@@ -98,7 +87,7 @@ class GuestCalculation
 
         /* Guest cart, allow operations */
         if (0 === $cartCustomerId && (null === $customerId || 0 === $customerId)) {
-            return $this->calculate($cart);
+            return $this->calculationProvider->calculate($cart);
         }
 
         if ($cartCustomerId !== $customerId) {
@@ -110,27 +99,6 @@ class GuestCalculation
             );
         }
 
-        return $this->calculate($cart);
-    }
-
-    /**
-     * Calculate
-     *
-     * @param Quote $quote
-     * @return array
-     */
-    private function calculate(Quote $quote): array
-    {
-        $remainingCost = $this->remainingCostCalculationFactory->create();
-
-        $subtotal = $quote->getShippingAddress()->getSubtotalWithDiscount();
-        $remainingCostValue = $this->infoProvider->getRemainingCostValue($quote, $subtotal);
-        $remainingCost->setMessage($this->infoProvider->getMessage($remainingCostValue, $subtotal));
-        $remainingCost->setValue($remainingCostValue);
-
-        return [
-            RemainingCostInterface::MESSAGE => $remainingCost->getMessage(),
-            RemainingCostInterface::VALUE => $remainingCost->getValue()
-        ];
+        return $this->calculationProvider->calculate($cart);
     }
 }
