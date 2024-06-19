@@ -9,12 +9,9 @@ declare(strict_types=1);
 namespace Space\FreeShippingRemainingCostGraphQl\Model;
 
 use Magento\Quote\Api\CartManagementInterface;
-use Space\FreeShippingRemainingCost\Api\Data\RemainingCostInterfaceFactory;
-use Space\FreeShippingRemainingCost\Model\Service\InfoProvider;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
-use Space\FreeShippingRemainingCost\Api\Data\RemainingCostInterface;
 
 class CustomerCalculation
 {
@@ -24,30 +21,22 @@ class CustomerCalculation
     private CartManagementInterface $cartManagement;
 
     /**
-     * @var RemainingCostInterfaceFactory
+     * @var CalculationProvider
      */
-    private RemainingCostInterfaceFactory $remainingCostCalculationFactory;
-
-    /**
-     * @var InfoProvider
-     */
-    private InfoProvider $infoProvider;
+    private CalculationProvider $calculationProvider;
 
     /**
      * Constructor
      *
      * @param CartManagementInterface $cartManagement
-     * @param RemainingCostInterfaceFactory $remainingCostCalculationFactory
-     * @param InfoProvider $infoProvider
+     * @param CalculationProvider $calculationProvider
      */
     public function __construct(
         CartManagementInterface $cartManagement,
-        RemainingCostInterfaceFactory $remainingCostCalculationFactory,
-        InfoProvider $infoProvider
+        CalculationProvider $calculationProvider
     ) {
         $this->cartManagement = $cartManagement;
-        $this->remainingCostCalculationFactory = $remainingCostCalculationFactory;
-        $this->infoProvider = $infoProvider;
+        $this->calculationProvider = $calculationProvider;
     }
 
     /**
@@ -68,27 +57,6 @@ class CustomerCalculation
             );
         }
 
-        return $this->calculate($cart);
-    }
-
-    /**
-     * Calculate
-     *
-     * @param Quote $quote
-     * @return array
-     */
-    public function calculate(Quote $quote): array
-    {
-        $remainingCost = $this->remainingCostCalculationFactory->create();
-
-        $subtotal = $quote->getShippingAddress()->getSubtotalWithDiscount();
-        $remainingCostValue = $this->infoProvider->getRemainingCostValue($quote, $subtotal);
-        $remainingCost->setMessage($this->infoProvider->getMessage($remainingCostValue, $subtotal));
-        $remainingCost->setValue($remainingCostValue);
-
-        return [
-            RemainingCostInterface::MESSAGE => $remainingCost->getMessage(),
-            RemainingCostInterface::VALUE => $remainingCost->getValue()
-        ];
+        return $this->calculationProvider->calculate($cart);
     }
 }
