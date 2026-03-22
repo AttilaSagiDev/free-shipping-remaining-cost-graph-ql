@@ -37,6 +37,10 @@ Support:
 
 ## Change Log ##
 
+Version 1.0.1 - Mar 22, 2026
+- Add unit tests
+- PHP 8.4 upgrades
+
 Version 1.0.0 - June 25, 2024
 - Compatibility with Magento Community Edition  2.4.x
 
