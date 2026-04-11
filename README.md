@@ -1,5 +1,7 @@
 # **Magento 2 Free Shipping Remaining Cost GraphQL Extension** #
 
+[![M2 Coding Standard](https://github.com/AttilaSagiDev/free-shipping-remaining-cost-graph-ql/actions/workflows/codesniffer-actions.yml/badge.svg?branch=develop)](https://github.com/AttilaSagiDev/free-shipping-remaining-cost-graph-ql/actions/workflows/codesniffer-actions.yml)
+
 ## Description ##
 
 This extension will add GraphQL support to the Free Shipping Remaining Cost Magento 2 module. Adding support to get guest cart or customer cart remaining cost via GraphQL Query.
